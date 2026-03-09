@@ -1,0 +1,286 @@
+pandas-learning-journey
+
+1.Reading in Files
+import pandas as pd
+
+df = pd.read_csv(r"D:\Finished project\pandas-learning-journey\countries of the world.csv")
+df
+
+df = pd.read_csv(r"D:\Finished project\pandas-learning-journey\countries of the world.txt", sep = '\t')
+df
+
+df = pd.read_table(r"D:\Finished project\pandas-learning-journey\countries of the world.txt", sep = '\t')
+df
+
+df = pd.read_table(r"D:\Finished project\pandas-learning-journey\countries of the world.csv", sep = ',')
+df
+
+df = pd.read_json(r"D:\Finished project\pandas-learning-journey\json_sample.json")
+df
+
+df2 = pd.read_excel(r"D:\Finished project\pandas-learning-journey\world_population_excel_workbook.xlsx", sheet_name = 'Sheet1')
+df2
+
+pd.set_option('display.max.rows', 235)
+pd.set_option('display.max.columns', 40)
+
+df2.shape
+
+df2.head(7)
+
+df2.tail(10)
+
+df2['Rank']
+
+df2.loc[224]
+
+df2.iloc[224]
+
+2.Filtering and Ordering
+
+import pandas as pd
+
+df = pd.read_csv(r"D:\Finished project\pandas-learning-journey\world_population.csv")
+df
+
+df[df['Rank'] <=10]
+
+specific_countries = ['Bangladesh','Brazil']
+df[df['Country'].isin(specific_countries)]
+
+df[df['Country'].str.contains('United')]
+
+df2.filter(items = ['Continent', 'CCA3'])
+
+df2.filter(items = ['Zimbabwe'], axis = 0)
+
+df2.filter(like = 'United', axis = 0)
+
+df2.loc['United States']
+
+df2.iloc[3]
+
+df[df['Rank'] < 10].sort_values('Rank', ascending = False)
+
+df[df['Rank'] < 10].sort_values(by=['Country', 'Rank'], ascending = False)
+
+df[df['Rank'] < 10].sort_values(by=['Country', 'Rank'], ascending = [False, True])
+
+3.Indexes in Pandas
+
+df = pd.read_csv(r"D:\Finished project\pandas-learning-journey\world_population.csv", index_col = 'Country')
+df
+
+df.reset_index(inplace = True)
+df
+
+df.set_index('Country',inplace = True)
+df
+
+df.loc['Albania']
+
+df.iloc[1]
+
+df.set_index(['Country','Continent'], inplace = True)
+
+df.sort_index(ascending=[False,True])
+
+pd.set_option('display.max.rows', 235)
+
+#multi-layer indexing
+df.loc['South America','Argentina']
+
+#initial indexing
+df.iloc[1]
+
+4.Group by and Aggregating
+
+group_by_frame = df.groupby('Base Flavor')
+
+group_by_frame.mean(numeric_only=True)
+
+df.groupby('Base Flavor').mean(numeric_only=True)
+
+df.groupby('Base Flavor').count()
+
+df.groupby('Base Flavor').sum(numeric_only=True)
+
+df.groupby('Base Flavor').min()
+
+df.groupby('Base Flavor').agg({'Flavor Rating':['mean','max','count','sum']})
+
+df.groupby('Base Flavor').agg({'Flavor Rating':['mean','max','count','sum'], 'Texture Rating':['mean','max','count','sum']})
+
+df.groupby(['Base Flavor','Liked']).mean(numeric_only=True)
+
+df.groupby(['Base Flavor','Liked']).agg({'Flavor Rating':['mean','max','count','sum'], 'Texture Rating':['mean','max','count','sum']})
+
+df.groupby(['Base Flavor','Liked']).describe()
+
+5.Merge, Join, & Concatenate
+
+df1 = pd.read_csv(r"D:\Finished project\pandas-learning-journey\LOTR.csv")
+df1
+
+df2 = pd.read_csv(r"D:\Finished project\pandas-learning-journey\LOTR 2.csv")
+df2
+
+df1.merge(df2, how = 'inner', on = ['FellowshipID', 'FirstName'])
+
+df1.merge(df2, how = 'outer')
+
+df1.merge(df2, how = 'left')
+
+df1.merge(df2, how = 'right')
+
+df1.merge(df2, how = 'cross')
+
+df1.join(df2, on = 'FellowshipID', how = 'outer', lsuffix = '_Left', rsuffix = '_Right')
+
+df4 = df1.set_index('FellowshipID').join(df2.set_index('FellowshipID'), lsuffix = '_Left', rsuffix = '_Right', how = 'outer')
+df4
+
+pd.concat([df1,df2], join = 'outer',axis = 1)
+
+6.Data Cleaning in Pandas
+
+df = pd.read_excel(r"D:\Finished project\pandas-learning-journey\Customer Call List.xlsx")
+df
+
+df.drop_duplicates()
+
+df = df.drop(columns = 'Not_Useful_Column')
+df
+
+#df["Last_Name"] = df["Last_Name"].str.lstrip("...")
+#df["Last_Name"] = df["Last_Name"].str.lstrip("/")
+#df["Last_Name"] = df["Last_Name"].str.rstrip("_")
+#df["Last_Name"] = df["Last_Name"].str.strip("123._/")
+df
+
+#df["Phone_Number"] = df["Phone_Number"].str.replace('[^a-zA-Z0-9]', '')
+#df["Phone_Number"].apply(lambda x: str(x)[0:3] + '-' + str(x)[3:6] + '-' + str(x)[6:10])
+#df["Phone_Number"] = df["Phone_Number"].apply(lambda x: str(x))
+#df["Phone_Number"] = df["Phone_Number"].apply(lambda x: x[0:3] + '-' + x[3:6] + '-' + x[6:10])
+df["Phone_Number"] = df["Phone_Number"].str.replace('nan--', '')
+df["Phone_Number"] = df["Phone_Number"].str.replace('N/a--', '')
+df
+
+df[["Street_Address", "State", "Zip_Code"]] = df["Address"].str.split(',', n=2, expand=True)
+df
+
+df["Paying Customer"] = df["Paying Customer"].str.replace('Yes', 'Y')
+df["Paying Customer"] = df["Paying Customer"].str.replace('No', 'N')
+df
+
+df["Do_Not_Contact"] = df["Do_Not_Contact"].str.replace('Yes', 'Y')
+df["Do_Not_Contact"] = df["Do_Not_Contact"].str.replace('No', 'N')
+df
+
+#df = df.replace('N/a', '')
+#df = df.replace('NaN', '')
+
+df = df.fillna('')
+df
+
+for x in df.index:
+    if df.loc[x, "Do_Not_Contact"] == 'Y':
+        df.drop(x, inplace=True)
+
+df
+
+for x in df.index:
+    if df.loc[x, "Phone_Number"] == '':
+        df.drop(x, inplace=True)
+
+df
+
+#Another way to drop null values
+#df = df.dropna(subset = "Phone_Number"), inplace = True)
+
+df = df.reset_index(drop = True)
+df
+
+# After cleaning, save BOTH formats
+df.to_csv(r"D:\Finished project\pandas-learning-journey\Customer Call List_CLEANED.csv", 
+          index=False)
+df.to_excel(r"D:\Finished project\pandas-learning-journey\Customer Call List_CLEANED.xlsx", 
+           index=False, 
+           sheet_name="Cleaned")
+
+print("✅ CSV and Excel files saved!")
+
+7.EDA in Pandas
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(r"D:\Finished project\pandas-learning-journey\world_population.csv")
+df
+
+pd.set_option('display.float_format', lambda x: '%.2f' % x)
+
+df.info()
+
+df.describe()
+
+df.isnull().sum()
+
+df.nunique()
+
+df.sort_values(by = "World Population Percentage", ascending=False).head(10)
+
+df.corr(numeric_only=True)
+
+sns.heatmap(df.corr(numeric_only=True), annot=True)
+plt.rcParams['figure.figsize'] = (20,7)
+plt.show()
+
+df.groupby('Continent').mean(numeric_only=True).sort_values(by = "2022 Population", ascending=False)
+
+df[df['Continent'].str.contains('Oceania')]
+
+df2 = df.groupby('Continent')[['1970 Population', 
+      '1980 Population', '1990 Population', '2000 Population', 
+      '2010 Population', '2015 Population', '2020 Population', 
+      '2022 Population']].mean().sort_values(by="2022 Population", ascending=False)
+df2
+
+df.columns
+
+df3 = df2.transpose()
+df3
+
+df3.plot()
+
+df.boxplot(figsize=(20,10))
+
+df.select_dtypes(include='float')
+
+8.Pandas Visualization
+
+import pandas as pd 
+import numpy as np
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(r"D:\Finished project\pandas-learning-journey\Ice Cream Ratings.csv")
+df = df.set_index('Date')
+df
+
+print(plt.style.available)
+plt.style.use('classic')
+
+df.plot(kind ='line', title ='Ice Cream Ratings', xlabel ='Daily Ratings', ylabel ='Scores')
+
+df.plot.barh(stacked =True)
+
+df.plot.scatter(x ='Texture Rating', y = 'Overall Rating', s = 500, c = 'Yellow')
+
+df.plot.hist(bins = 10)
+
+df.boxplot()
+
+df.plot.area(figsize = (10,5))
+
+df.plot.pie(y = 'Flavor Rating', figsize = (10,10))
